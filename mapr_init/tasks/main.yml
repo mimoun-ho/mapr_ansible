@@ -1,33 +1,31 @@
 ---
-# Fichier principal pour le rôle hadoop_common
+- name: Creation des repertoires
+  import_tasks: creation_repertoires.yml
 
-# - name: Creation des repertoires
-#   import_tasks: creation_repertoires.yml
+- name: creation des volumes
+  import_tasks: creation_volume.yml
 
-# - name: creation des volumes
-#   import_tasks: creation_volume.yml
+- name: creation plannif
+  import_tasks: creation_planification.yml
 
-# - name: creation plannif
-#   import_tasks: creation_planification.yml
+- name: creation snapshot
+  import_tasks: creation_snapshot.yml
 
-# - name: creation snapshot
-#   import_tasks: creation_snapshot.yml
-
-# - name : creation des mirror
-#   import_tasks: creation_mirror.yml
+- name : creation des mirror
+  import_tasks: creation_mirror.yml
 
 
-- name: creation des repertoires v2
-  import_tasks: creation_repertoire_v2.yml
+# - name: creation des repertoires v2
+#   import_tasks: creation_repertoire_v2.yml
 
-- name: creation des volumes v2
-  import_tasks: creation_volumev2.yml
+# - name: creation des volumes v2
+#   import_tasks: creation_volumev2.yml
 
-- name: creation plannif v2
-  import_tasks: creation_planificationv2.yml
+# - name: creation plannif v2
+#   import_tasks: creation_planificationv2.yml
 
-- name: creation snapshot v2
-  import_tasks: creation_snapshotv2.yml
+# - name: creation snapshot v2
+#   import_tasks: creation_snapshotv2.yml
 
-- name : creation des mirror v2
-  import_tasks: creation_mirrorv2.yml
+# - name : creation des mirror v2
+#   import_tasks: creation_mirrorv2.yml
