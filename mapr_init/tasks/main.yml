@@ -17,5 +17,17 @@
 #   import_tasks: creation_mirror.yml
 
 
-- name: creation des repertoires
-  include_tasks: creation_repertoire.yml
+- name: creation des repertoires v2
+  import_tasks: creation_repertoire_v2.yml
+
+- name: creation des volumes v2
+  import_tasks: creation_volumev2.yml
+
+- name: creation plannif v2
+  import_tasks: creation_planificationv2.yml
+
+- name: creation snapshot v2
+  import_tasks: creation_snapshotv2.yml
+
+- name : creation des mirror v2
+  import_tasks: creation_mirrorv2.yml
