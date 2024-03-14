@@ -20,16 +20,15 @@
       }}
   when: snapshot_list.rc != 0 or snapshot_creation.changed
 
-
 - name: Vérifier si le snapshot volume-clean-snapshot existe
-  command: maprcli volume snapshot list -volume volume-clean-data | grep volume-clean-snapshot
-  register: snapshot_exists
+  command: maprcli volume snapshot list -volume volume-clean-data
+  register: snapshot_list
   ignore_errors: yes
   changed_when: False
 
 - name: Créer le snapshot volume-clean-snapshot
-  command: maprcli volume snapshot create -volume volume-clean-data -snapshotname volume-clean-snapshot -retain 90d
-  when: snapshot_exists.rc != 0
+  command: maprcli volume snapshot create -volume volume-clean-data -snapshotname volume-clean-snapshot -retain 30d
+  when: "'volume-clean-snapshot' not in snapshot_list.stdout"
   register: snapshot_creation
   changed_when: True
 
@@ -42,18 +41,15 @@
         else "Le snapshot volume-clean-snapshot existe déjà."
       }}
   when: snapshot_list.rc != 0 or snapshot_creation.changed
-
-
-
 - name: Vérifier si le snapshot volume-modeled-snapshot existe
-  command: maprcli volume snapshot list -volume volume-modeled-data | grep volume-modeled-snapshot
-  register: snapshot_exists
+  command: maprcli volume snapshot list -volume volume-modeled-data
+  register: snapshot_list
   ignore_errors: yes
   changed_when: False
 
 - name: Créer le snapshot volume-modeled-snapshot
-  command: maprcli volume snapshot create -volume volume-modeled-data -snapshotname volume-modeled-snapshot -retain 180d
-  when: snapshot_exists.rc != 0
+  command: maprcli volume snapshot create -volume volume-modeled-data -snapshotname volume-modeled-snapshot -retain 30d
+  when: "'volume-modeled-snapshot' not in snapshot_list.stdout"
   register: snapshot_creation
   changed_when: True
 
