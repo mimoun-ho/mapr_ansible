@@ -1,0 +1,5 @@
+---
+- name: Déployer exo tp3
+  hosts: localhost
+  roles:
+    - role: mapr_init
