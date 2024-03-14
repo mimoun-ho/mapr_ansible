@@ -1,5 +1,5 @@
 - name: Vérifier si la planification Daily_30 existe
-  command: maprcli schedule list -name Daily_30
+  shell: maprcli schedule list -output verbose | grep -w '^Daily_30$'
   register: Daily_30_exists
   ignore_errors: yes
   changed_when: False
@@ -7,7 +7,7 @@
 - name: Créer la planification Daily_30
   command: maprcli schedule create -schedule '{"name":"Daily_30","rules":[{"frequency":"monthly","retain":"30d","time":15}]}'
   when: Daily_30_exists.rc != 0
-  register: daily_30_creation
+  register: Daily_30_creation
   changed_when: True
 
 - name: Afficher le message pour Daily_30
@@ -18,18 +18,19 @@
         if Daily_30_exists.rc == 0 
         else "La planification Daily_30 a été créée avec succès."
       }}
-  when: Daily_30_exists.rc == 0 or daily_30_creation.changed
+  when: Daily_30_exists.rc == 0 or Daily_30_creation.changed
+
 
 - name: Vérifier si la planification Weekly_90 existe
-  command: maprcli schedule list -name Weekly_90
-  register: weekly_90_exists
+  shell: maprcli schedule list -output verbose | grep -w '^Weekly_90$'
+  register: Weekly_90_exists
   ignore_errors: yes
   changed_when: False
 
 - name: Créer la planification Weekly_90
-  command: maprcli schedule create -schedule '{"name":"Weekly_90","rules":[{"frequency":"weekly","retain":"90d","time":15,"dayOfWeek":3}]}'
-  when: weekly_90_exists.rc != 0
-  register: weekly_90_creation
+  command: maprcli schedule create -schedule '{"name":"Weekly_90","rules":[{"frequency":"monthly","retain":"30d","time":15}]}'
+  when: Weekly_90_exists.rc != 0
+  register: Weekly_90_creation
   changed_when: True
 
 - name: Afficher le message pour Weekly_90
@@ -37,29 +38,30 @@
     msg: >
       {{
         "La planification Weekly_90 existe déjà." 
-        if weekly_90_exists.rc == 0 
+        if Weekly_90_exists.rc == 0 
         else "La planification Weekly_90 a été créée avec succès."
       }}
-  when: weekly_90_exists.rc == 0 or weekly_90_creation.changed
+  when: Weekly_90_exists.rc == 0 or Weekly_90_creation.changed
 
-- name: Vérifier si la planification Monthly_180 existe
-  command: maprcli schedule list -name Monthly_180
+
+- name: Vérifier si la planification monthly_180 existe
+  shell: maprcli schedule list -output verbose | grep -w '^monthly_180$'
   register: monthly_180_exists
   ignore_errors: yes
   changed_when: False
 
-- name: Créer la planification Monthly_180
-  command: maprcli schedule create -schedule '{"name":"Monthly_180","rules":[{"frequency":"daily","retain":"180d","time":15,"dayOfMonth":13}]}'
+- name: Créer la planification monthly_180
+  command: maprcli schedule create -schedule '{"name":"monthly_180","rules":[{"frequency":"monthly","retain":"30d","time":15}]}'
   when: monthly_180_exists.rc != 0
   register: monthly_180_creation
   changed_when: True
 
-- name: Afficher le message pour Monthly_180
+- name: Afficher le message pour monthly_180
   debug:
     msg: >
       {{
-        "La planification Monthly_180 existe déjà." 
+        "La planification monthly_180 existe déjà." 
         if monthly_180_exists.rc == 0 
-        else "La planification Monthly_180 a été créée avec succès."
+        else "La planification monthly_180 a été créée avec succès."
       }}
   when: monthly_180_exists.rc == 0 or monthly_180_creation.changed
