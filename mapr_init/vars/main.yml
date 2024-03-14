@@ -1,2 +1,39 @@
 ---
-# vars file for mapr_init
+
+mapr_directories:
+  - /user/mapr/projetmapr_ansible/data
+  - /user/mapr/projetmapr_ansible/cascade
+
+volumes:
+  - name: volume-raw-data
+    path: /user/mapr/projetmapr_ansible/data/volume-raw-data
+  - name: volume-clean-data
+    path: /user/mapr/projetmapr_ansible/data/volume-clean-data
+  - name: volume-modeled-data
+    path: /user/mapr/projetmapr_ansible/data/volume-modeled-data
+  - name: vol-data-source
+    path: /user/mapr/projetmapr_ansible/data/vol-data-source
+
+planifications:
+  - name: Daily_30
+    schedule: '{"name":"Daily_30","rules":[{"frequency":"monthly","retain":"30d","time":15}]}'
+  - name: Weekly_90
+    schedule: '{"name":"Weekly_90","rules":[{"frequency":"monthly","retain":"90d","time":15}]}'
+  - name: Monthly_180
+    schedule: '{"name":"Monthly_180","rules":[{"frequency":"monthly","retain":"180d","time":15}]}'
+
+ 
+snapshots:
+  - name: volume-raw-snapshot
+    volume: volume-raw-data
+  - name: volume-clean-snapshot
+    volume: volume-clean-data
+  - name: volume-modeled-snapshot
+    volume: volume-modeled-data
+
+
+mirror_volumes:
+  - name: mirror-level-1
+    source: retail-data-modeled@demo.mapr.com
+  - name: mirror-level-2
+    source: retail-data-modeled@demo.mapr.com

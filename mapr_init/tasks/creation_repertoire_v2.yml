@@ -1,0 +1,26 @@
+# tasks/creation_repertoire.yml
+---
+- name: Vérifier et créer les répertoires si nécessaire
+  block:
+    - name: Vérifier si le répertoire {{ item }} existe
+      command: hadoop fs -test -d {{ item }}
+      register: dir_exists
+      ignore_errors: yes
+      changed_when: False
+
+    - name: Créer le répertoire {{ item }}
+      command: hadoop fs -mkdir -p {{ item }}
+      when: dir_exists.rc != 0
+      register: mkdir_output
+      changed_when: True
+
+    - name: Afficher le message de création
+      debug:
+        msg: "Le répertoire {{ item }} a été créé avec succès."
+      when: mkdir_output is defined and mkdir_output.changed
+
+    - name: Afficher le message d'existence
+      debug:
+        msg: "Le répertoire {{ item }} existe déjà."
+      when: dir_exists.rc == 0
+  loop: "{{ mapr_directories }}"

@@ -1,0 +1,24 @@
+- name: "Vérifier et créer la planification {{ item.name }}"
+  block:
+    - name: Vérifier si la planification {{ item.name }} existe
+      shell: maprcli schedule list -output verbose | grep -E '^{{ item.name }}\s+'
+      register: planification_exists
+      ignore_errors: yes
+      changed_when: False
+
+    - name: Créer la planification {{ item.name }}
+      command: maprcli schedule create -schedule '{{ item.schedule }}'
+      when: planification_exists.rc != 0
+      register: planification_creation
+      changed_when: True
+
+    - name: Afficher le message pour {{ item.name }}
+      debug:
+        msg: >
+          {{
+            "La planification " + item.name + " existe déjà."
+            if planification_exists.rc == 0
+            else "La planification " + item.name + " a été créée avec succès."
+          }}
+      when: planification_exists.rc == 0 or planification_creation.changed
+  loop: "{{ planifications }}"

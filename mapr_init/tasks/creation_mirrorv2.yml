@@ -1,0 +1,46 @@
+- name: Gérer les volumes miroirs
+  block:
+    - name: Vérifier si le volume miroir {{ item.name }} existe
+      command: maprcli volume info -name {{ item.name }}
+      register: volume_mirror_exists
+      ignore_errors: yes
+      changed_when: False
+
+    - name: Créer le volume miroir {{ item.name }} correctement
+      command: maprcli volume create -name {{ item.name }} -source {{ item.source }} -type mirror
+      when: volume_mirror_exists.rc != 0
+      register: volume_mirror_creation
+      changed_when: True
+
+    - name: Afficher le message pour le volume miroir {{ item.name }}
+      debug:
+        msg: >
+          {{
+            "Le volume miroir " + item.name + " existe déjà." 
+            if volume_mirror_exists.rc == 0 
+            else "Le volume miroir " + item.name + " a été créé avec succès."
+          }}
+      when: volume_mirror_exists.rc == 0 or volume_mirror_creation.changed
+
+    - name: Vérifier si le miroir {{ item.name }} est déjà en cours
+      command: maprcli volume info -name {{ item.name }} | grep "Mirror State"
+      register: mirror_started
+      ignore_errors: yes
+      changed_when: False
+
+    - name: Démarrer le miroir {{ item.name }}, si nécessaire
+      command: maprcli volume mirror start -name {{ item.name }}
+      when: "'Not Mirrored' in mirror_started.stdout or 'Mirror State' not in mirror_started.stdout"
+      register: mirror_start
+      changed_when: True
+
+    - name: Afficher le message pour le démarrage du miroir {{ item.name }}
+      debug:
+        msg: >
+          {{
+            "Le miroir " + item.name + " est déjà en cours ou n'a pas besoin d'être démarré." 
+            if 'Mirroring' in mirror_started.stdout 
+            else "Le miroir " + item.name + " a été démarré avec succès ou était déjà actif."
+          }}
+      when: mirror_start.changed or ('Not Mirrored' in mirror_started.stdout or 'Mirror State' not in mirror_started.stdout)
+  loop: "{{ mirror_volumes }}"
