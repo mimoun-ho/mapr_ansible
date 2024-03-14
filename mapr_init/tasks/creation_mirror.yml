@@ -1,0 +1,89 @@
+- name: Vérifier si le volume mirror-level-1 existe
+  command: maprcli volume info -name mirror-level-1
+  register: volume_mirror_exists
+  ignore_errors: yes
+  changed_when: False
+
+- name: Créer le volume mirror-level-1 correctement
+  command: maprcli volume create -name mirror-level-1 -source retail-data-modeled@demo.mapr.com -type mirror
+  when: volume_mirror_exists.rc != 0
+  register: volume_mirror_creation
+  changed_when: True
+
+- name: Afficher le message pour le volume mirror-level-1
+  debug:
+    msg: >
+      {{
+        "Le volume mirror-level-1 existe déjà." 
+        if volume_mirror_exists.rc == 0 
+        else "Le volume mirror-level-1 a été créé avec succès."
+      }}
+  when: volume_mirror_exists.rc == 0 or volume_mirror_creation.changed
+
+
+- name: Vérifier si le miroir mirror-level-1 est déjà en cours
+  command: maprcli volume info -name mirror-level-1 | grep "Mirror State"
+  register: mirror_started
+  ignore_errors: yes
+  changed_when: False
+
+- name: Démarrer le miroir mirror-level-1, si nécessaire
+  command: maprcli volume mirror start -name mirror-level-1
+  when: "'Not Mirrored' in mirror_started.stdout or 'Mirror State' not in mirror_started.stdout"
+  register: mirror_start
+  changed_when: True
+
+- name: Afficher le message pour le démarrage du miroir mirror-level-1
+  debug:
+    msg: >
+      {{
+        "Le miroir mirror-level-1 est déjà en cours ou n'a pas besoin d'être démarré." 
+        if 'Mirroring' in mirror_started.stdout 
+        else "Le miroir mirror-level-1 a été démarré avec succès ou était déjà actif."
+      }}
+  when: mirror_start.changed or ('Not Mirrored' in mirror_started.stdout or 'Mirror State' not in mirror_started.stdout)
+
+- name: Vérifier si le volume mirror-level-2 existe
+  command: maprcli volume info -name mirror-level-2
+  register: volume_mirror_exists
+  ignore_errors: yes
+  changed_when: False
+
+- name: Créer le volume mirror-level-2 correctement
+  command: maprcli volume create -name mirror-level-2 -source retail-data-modeled@demo.mapr.com -type mirror
+  when: volume_mirror_exists.rc != 0
+  register: volume_mirror_creation
+  changed_when: True
+
+- name: Afficher le message pour le volume mirror-level-2
+  debug:
+    msg: >
+      {{
+        "Le volume mirror-level-2 existe déjà." 
+        if volume_mirror_exists.rc == 0 
+        else "Le volume mirror-level-2 a été créé avec succès."
+      }}
+  when: volume_mirror_exists.rc == 0 or volume_mirror_creation.changed
+
+
+- name: Vérifier si le miroir mirror-level-2 est déjà en cours
+  command: maprcli volume info -name mirror-level-2 | grep "Mirror State"
+  register: mirror_started
+  ignore_errors: yes
+  changed_when: False
+
+- name: Démarrer le miroir mirror-level-2, si nécessaire
+  command: maprcli volume mirror start -name mirror-level-2
+  when: "'Not Mirrored' in mirror_started.stdout or 'Mirror State' not in mirror_started.stdout"
+  register: mirror_start
+  changed_when: True
+
+- name: Afficher le message pour le démarrage du miroir mirror-level-2
+  debug:
+    msg: >
+      {{
+        "Le miroir mirror-level-2 est déjà en cours ou n'a pas besoin d'être démarré." 
+        if 'Mirroring' in mirror_started.stdout 
+        else "Le miroir mirror-level-2 a été démarré avec succès ou était déjà actif."
+      }}
+  when: mirror_start.changed or ('Not Mirrored' in mirror_started.stdout or 'Mirror State' not in mirror_started.stdout)

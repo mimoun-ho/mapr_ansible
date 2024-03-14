@@ -1,0 +1,88 @@
+- name: Vérifier si le volume volume-raw-data existe
+  command: maprcli volume info -name volume-raw-data
+  register: volume_raw_data_exists
+  ignore_errors: yes
+  changed_when: False
+
+- name: Créer le volume volume-raw-data
+  command: maprcli volume create -name volume-raw-data -path /user/mapr/projetmapr_ansible/data/volume-raw-data
+  when: volume_raw_data_exists.rc != 0
+  register: raw_data_creation
+  changed_when: True
+
+- name: Afficher le message pour volume-raw-data
+  debug:
+    msg: >
+      {{
+        "Le volume volume-raw-data existe déjà." 
+        if volume_raw_data_exists.rc == 0 
+        else "Le volume volume-raw-data a été créé avec succès."
+      }}
+  when: volume_raw_data_exists.rc == 0 or raw_data_creation.changed
+
+- name: Vérifier si le volume volume-clean-data existe
+  command: maprcli volume info -name volume-clean-data
+  register: volume_clean_data_exists
+  ignore_errors: yes
+  changed_when: False
+
+- name: Créer le volume volume-clean-data
+  command: maprcli volume create -name volume-clean-data -path /user/mapr/projetmapr_ansible/data/volume-clean-data
+  when: volume_clean_data_exists.rc != 0
+  register: clean_data_creation
+  changed_when: True
+
+- name: Afficher le message pour volume-clean-data
+  debug:
+    msg: >
+      {{
+        "Le volume volume-clean-data existe déjà." 
+        if volume_clean_data_exists.rc == 0 
+        else "Le volume volume-clean-data a été créé avec succès."
+      }}
+  when: volume_clean_data_exists.rc == 0 or clean_data_creation.changed
+
+- name: Vérifier si le volume volume-modeled-data existe
+  command: maprcli volume info -name volume-modeled-data
+  register: volume_modeled_data_exists
+  ignore_errors: yes
+  changed_when: False
+
+- name: Créer le volume volume-modeled-data
+  command: maprcli volume create -name volume-modeled-data -path /user/mapr/projetmapr_ansible/data/volume-modeled-data
+  when: volume_modeled_data_exists.rc != 0
+  register: modeled_data_creation
+  changed_when: True
+
+- name: Afficher le message pour volume-modeled-data
+  debug:
+    msg: >
+      {{
+        "Le volume volume-modeled-data existe déjà." 
+        if volume_modeled_data_exists.rc == 0 
+        else "Le volume volume-modeled-data a été créé avec succès."
+      }}
+  when: volume_modeled_data_exists.rc == 0 or modeled_data_creation.changed
+
+- name: Vérifier si le volume vol-data-source existe
+  command: maprcli volume info -name vol-data-source
+  register: volume_modeled_data_exists
+  ignore_errors: yes
+  changed_when: False
+
+- name: Créer le volume vol-data-source
+  command: maprcli volume create -name vol-data-source -path /user/mapr/projetmapr_ansible/data/vol-data-source
+  when: volume_modeled_data_exists.rc != 0
+  register: modeled_data_creation
+  changed_when: True
+
+- name: Afficher le message pour vol-data-source
+  debug:
+    msg: >
+      {{
+        "Le volume vol-data-source existe déjà." 
+        if volume_modeled_data_exists.rc == 0 
+        else "Le volume vol-data-source a été créé avec succès."
+      }}
+  when: volume_modeled_data_exists.rc == 0 or modeled_data_creation.changed
+

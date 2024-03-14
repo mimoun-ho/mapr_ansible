@@ -1,0 +1,65 @@
+- name: Vérifier si la planification Daily_30 existe
+  command: maprcli schedule list -name Daily_30
+  register: Daily_30_exists
+  ignore_errors: yes
+  changed_when: False
+
+- name: Créer la planification Daily_30
+  command: maprcli schedule create -name Daily_30 -retention 30
+  when: Daily_30_exists.rc != 0
+  register: daily_30_creation
+  changed_when: True
+
+- name: Afficher le message pour Daily_30
+  debug:
+    msg: >
+      {{
+        "La planification Daily_30 existe déjà." 
+        if Daily_30_exists.rc == 0 
+        else "La planification Daily_30 a été créée avec succès."
+      }}
+  when: Daily_30_exists.rc == 0 or daily_30_creation.changed
+
+- name: Vérifier si la planification Weekly_90 existe
+  command: maprcli schedule list -name Weekly_90
+  register: weekly_90_exists
+  ignore_errors: yes
+  changed_when: False
+
+- name: Créer la planification Weekly_90
+  command: maprcli schedule create -name Weekly_90 -retention 90
+  when: weekly_90_exists.rc != 0
+  register: weekly_90_creation
+  changed_when: True
+
+- name: Afficher le message pour Weekly_90
+  debug:
+    msg: >
+      {{
+        "La planification Weekly_90 existe déjà." 
+        if weekly_90_exists.rc == 0 
+        else "La planification Weekly_90 a été créée avec succès."
+      }}
+  when: weekly_90_exists.rc == 0 or weekly_90_creation.changed
+
+- name: Vérifier si la planification Monthly_180 existe
+  command: maprcli schedule list -name Monthly_180
+  register: monthly_180_exists
+  ignore_errors: yes
+  changed_when: False
+
+- name: Créer la planification Monthly_180
+  command: maprcli schedule create -name Monthly_180 -retention 180
+  when: monthly_180_exists.rc != 0
+  register: monthly_180_creation
+  changed_when: True
+
+- name: Afficher le message pour Monthly_180
+  debug:
+    msg: >
+      {{
+        "La planification Monthly_180 existe déjà." 
+        if monthly_180_exists.rc == 0 
+        else "La planification Monthly_180 a été créée avec succès."
+      }}
+  when: monthly_180_exists.rc == 0 or monthly_180_creation.changed

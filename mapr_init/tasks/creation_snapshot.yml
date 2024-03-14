@@ -1,0 +1,64 @@
+- name: Vérifier si le snapshot volume-raw-snapshot existe
+  command: maprcli volume snapshot list -volume volume-raw-data | grep volume-raw-snapshot
+  register: snapshot_exists
+  ignore_errors: yes
+  changed_when: False
+
+- name: Créer le snapshot volume-raw-snapshot
+  command: maprcli volume snapshot create -volume volume-raw-data -snapshotname volume-raw-snapshot -retention 30
+  when: snapshot_exists.rc != 0
+  register: snapshot_creation
+  changed_when: True
+
+- name: Afficher le message pour le snapshot volume-raw-snapshot
+  debug:
+    msg: >
+      {{
+        "Le snapshot volume-raw-snapshot existe déjà." 
+        if snapshot_exists.rc == 0 
+        else "Le snapshot volume-raw-snapshot a été créé avec succès."
+      }}
+  when: snapshot_exists.rc == 0 or snapshot_creation.changed
+
+- name: Vérifier si le snapshot volume-clean-snapshot existe
+  command: maprcli volume snapshot list -volume volume-clean-data | grep volume-clean-snapshot
+  register: snapshot_exists
+  ignore_errors: yes
+  changed_when: False
+
+- name: Créer le snapshot volume-clean-snapshot
+  command: maprcli volume snapshot create -volume volume-clean-data -snapshotname volume-clean-snapshot -retention 30
+  when: snapshot_exists.rc != 0
+  register: snapshot_creation
+  changed_when: True
+
+- name: Afficher le message pour le snapshot volume-clean-snapshot
+  debug:
+    msg: >
+      {{
+        "Le snapshot volume-clean-snapshot existe déjà." 
+        if snapshot_exists.rc == 0 
+        else "Le snapshot volume-clean-snapshot a été créé avec succès."
+      }}
+  when: snapshot_exists.rc == 0 or snapshot_creation.changed
+- name: Vérifier si le snapshot volume-modeled-snapshot existe
+  command: maprcli volume snapshot list -volume volume-modeled-data | grep volume-modeled-snapshot
+  register: snapshot_exists
+  ignore_errors: yes
+  changed_when: False
+
+- name: Créer le snapshot volume-modeled-snapshot
+  command: maprcli volume snapshot create -volume volume-modeled-data -snapshotname volume-modeled-snapshot -retention 30
+  when: snapshot_exists.rc != 0
+  register: snapshot_creation
+  changed_when: True
+
+- name: Afficher le message pour le snapshot volume-modeled-snapshot
+  debug:
+    msg: >
+      {{
+        "Le snapshot volume-modeled-snapshot existe déjà." 
+        if snapshot_exists.rc == 0 
+        else "Le snapshot volume-modeled-snapshot a été créé avec succès."
+      }}
+  when: snapshot_exists.rc == 0 or snapshot_creation.changed

@@ -1,0 +1,43 @@
+- name: Vérifier si le répertoire /user/mapr/projetmapr_ansible/data existe
+  command: hadoop fs -test -d /user/mapr/projetmapr_ansible/data
+  register: dir_exists
+  ignore_errors: yes
+  changed_when: False
+
+- name: Créer le répertoire /user/mapr/projetmapr_ansible/data
+  command: hadoop fs -mkdir -p /user/mapr/projetmapr_ansible/data
+  when: dir_exists.rc != 0
+  register: mkdir_output
+  changed_when: True
+
+- name: Afficher le message de création
+  debug:
+    msg: "Le répertoire /user/mapr/projetmapr_ansible/data a été créé avec succès."
+  when: mkdir_output is defined and mkdir_output.changed
+
+- name: Afficher le message d'existence
+  debug:
+    msg: "Le répertoire /user/mapr/projetmapr_ansible/data existe déjà."
+  when: dir_exists.rc == 0
+  
+- name: Vérifier si le répertoire /user/mapr/projetmapr_ansible/cascade existe
+  command: hadoop fs -test -d /user/mapr/projetmapr_ansible/cascade
+  register: dir_exists
+  ignore_errors: yes
+  changed_when: False
+
+- name: Créer le répertoire /user/mapr/projetmapr_ansible/cascade
+  command: hadoop fs -mkdir -p /user/mapr/projetmapr_ansible/cascade
+  when: dir_exists.rc != 0
+  register: mkdir_output
+  changed_when: True
+
+- name: Afficher le message de création
+  debug:
+    msg: "Le répertoire /user/mapr/projetmapr_ansible/cascade a été créé avec succès."
+  when: mkdir_output is defined and mkdir_output.changed
+
+- name: Afficher le message d'existence
+  debug:
+    msg: "Le répertoire /user/mapr/projetmapr_ansible/cascade existe déjà."
+  when: dir_exists.rc == 0
