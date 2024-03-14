@@ -1,5 +1,5 @@
 - name: Vérifier si la planification Daily_30 existe
-  shell: maprcli schedule list -output verbose | grep -w '^Daily_30$'
+  shell: maprcli schedule list -output verbose | grep -E '^Daily_30\s+'
   register: Daily_30_exists
   ignore_errors: yes
   changed_when: False
@@ -22,7 +22,7 @@
 
 
 - name: Vérifier si la planification Weekly_90 existe
-  shell: maprcli schedule list -output verbose | grep -w '^Weekly_90$'
+  shell: maprcli schedule list -output verbose | grep -E '^Weekly_90\s+'
   register: Weekly_90_exists
   ignore_errors: yes
   changed_when: False
@@ -44,24 +44,24 @@
   when: Weekly_90_exists.rc == 0 or Weekly_90_creation.changed
 
 
-- name: Vérifier si la planification monthly_180 existe
-  shell: maprcli schedule list -output verbose | grep -w '^monthly_180$'
-  register: monthly_180_exists
+- name: Vérifier si la planification Monthly_180 existe
+  shell: maprcli schedule list -output verbose | grep -E '^Monthly_180\s+'
+  register: Monthly_180_exists
   ignore_errors: yes
   changed_when: False
 
-- name: Créer la planification monthly_180
-  command: maprcli schedule create -schedule '{"name":"monthly_180","rules":[{"frequency":"monthly","retain":"30d","time":15}]}'
-  when: monthly_180_exists.rc != 0
-  register: monthly_180_creation
+- name: Créer la planification Monthly_180
+  command: maprcli schedule create -schedule '{"name":"Monthly_180","rules":[{"frequency":"monthly","retain":"30d","time":15}]}'
+  when: Monthly_180_exists.rc != 0
+  register: Monthly_180_creation
   changed_when: True
 
-- name: Afficher le message pour monthly_180
+- name: Afficher le message pour Monthly_180
   debug:
     msg: >
       {{
-        "La planification monthly_180 existe déjà." 
-        if monthly_180_exists.rc == 0 
-        else "La planification monthly_180 a été créée avec succès."
+        "La planification Monthly_180 existe déjà." 
+        if Monthly_180_exists.rc == 0 
+        else "La planification Monthly_180 a été créée avec succès."
       }}
-  when: monthly_180_exists.rc == 0 or monthly_180_creation.changed
+  when: Monthly_180_exists.rc == 0 or Monthly_180_creation.changed
