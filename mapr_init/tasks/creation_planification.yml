@@ -5,7 +5,7 @@
   changed_when: False
 
 - name: Créer la planification Daily_30
-  command: maprcli schedule create -name Daily_30 -retention 30
+  command: maprcli schedule create -schedule '{"name":"raw","rules":[{"frequency":"monthly","retain":"30d","time":15}]}'
   when: Daily_30_exists.rc != 0
   register: daily_30_creation
   changed_when: True
@@ -27,7 +27,7 @@
   changed_when: False
 
 - name: Créer la planification Weekly_90
-  command: maprcli schedule create -name Weekly_90 -retention 90
+  command: maprcli schedule create -schedule '{"name":"clean","rules":[{"frequency":"weekly","retain":"90d","time":15,"dayOfWeek":3}]}'
   when: weekly_90_exists.rc != 0
   register: weekly_90_creation
   changed_when: True
@@ -49,7 +49,7 @@
   changed_when: False
 
 - name: Créer la planification Monthly_180
-  command: maprcli schedule create -name Monthly_180 -retention 180
+  command: maprcli schedule create -schedule '{"name":"modeled","rules":[{"frequency":"daily","retain":"180d","time":15,"dayOfMonth":13}]}'
   when: monthly_180_exists.rc != 0
   register: monthly_180_creation
   changed_when: True
