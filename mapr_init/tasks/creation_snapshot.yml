@@ -1,12 +1,12 @@
 - name: Vérifier si le snapshot volume-raw-snapshot existe
-  command: maprcli volume snapshot list -volume volume-raw-data | grep volume-raw-snapshot
-  register: snapshot_exists
+  command: maprcli volume snapshot list -volume volume-raw-data
+  register: snapshot_list
   ignore_errors: yes
   changed_when: False
 
 - name: Créer le snapshot volume-raw-snapshot
   command: maprcli volume snapshot create -volume volume-raw-data -snapshotname volume-raw-snapshot -retention 30
-  when: snapshot_exists.rc != 0
+  when: "'volume-raw-snapshot' not in snapshot_list.stdout"
   register: snapshot_creation
   changed_when: True
 
@@ -27,7 +27,7 @@
   changed_when: False
 
 - name: Créer le snapshot volume-clean-snapshot
-  command: maprcli volume snapshot create -volume volume-clean-data -snapshotname volume-clean-snapshot -retention 30
+  command: maprcli volume snapshot create -volume volume-clean-data -snapshotname volume-clean-snapshot -retention 90
   when: snapshot_exists.rc != 0
   register: snapshot_creation
   changed_when: True
@@ -48,7 +48,7 @@
   changed_when: False
 
 - name: Créer le snapshot volume-modeled-snapshot
-  command: maprcli volume snapshot create -volume volume-modeled-data -snapshotname volume-modeled-snapshot -retention 30
+  command: maprcli volume snapshot create -volume volume-modeled-data -snapshotname volume-modeled-snapshot -retention 180
   when: snapshot_exists.rc != 0
   register: snapshot_creation
   changed_when: True
