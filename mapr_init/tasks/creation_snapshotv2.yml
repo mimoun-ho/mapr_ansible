@@ -1,0 +1,20 @@
+- name: Vérifier si le snapshot "{{ snapshot.name }}" existe pour le volume "{{ snapshot.volume }}"
+  command: maprcli volume snapshot list -volume "{{ snapshot.volume }}"
+  register: snapshot_list
+  ignore_errors: yes
+  changed_when: False
+
+- name: Créer le snapshot "{{ snapshot.name }}"
+  command: maprcli volume snapshot create -volume "{{ snapshot.volume }}" -snapshotname "{{ snapshot.name }}" -retain 30d
+  when: "'{{ snapshot.name }}' not in snapshot_list.stdout"
+  register: snapshot_creation
+  changed_when: True
+
+- name: Afficher le message pour le snapshot "{{ snapshot.name }}"
+  debug:
+    msg: >
+      {{
+        "Le snapshot " + snapshot.name + " a été créé avec succès."
+        if snapshot_creation.changed 
+        else "Le snapshot " + snapshot.name + " existe déjà."
+      }}

@@ -1,4 +1,4 @@
-- name: Vérifier si le volume volume-raw-data existe
+- name: vérif si le volume volume-raw-data existe
   command: maprcli volume info -name volume-raw-data
   register: volume_raw_data_exists
   ignore_errors: yes
@@ -20,7 +20,7 @@
       }}
   when: volume_raw_data_exists.rc == 0 or raw_data_creation.changed
 
-- name: Vérifier si le volume volume-clean-data existe
+- name: vérif si le volume volume-clean-data existe
   command: maprcli volume info -name volume-clean-data
   register: volume_clean_data_exists
   ignore_errors: yes
@@ -42,7 +42,7 @@
       }}
   when: volume_clean_data_exists.rc == 0 or clean_data_creation.changed
 
-- name: Vérifier si le volume volume-modeled-data existe
+- name: vérif si le volume volume-modeled-data existe
   command: maprcli volume info -name volume-modeled-data
   register: volume_modeled_data_exists
   ignore_errors: yes
@@ -64,7 +64,7 @@
       }}
   when: volume_modeled_data_exists.rc == 0 or modeled_data_creation.changed
 
-- name: Vérifier si le volume vol-data-source existe
+- name: vérif si le volume vol-data-source existe
   command: maprcli volume info -name vol-data-source
   register: volume_modeled_data_exists
   ignore_errors: yes

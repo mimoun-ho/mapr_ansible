@@ -1,31 +1,49 @@
----
-- name: Creation des repertoires
-  import_tasks: creation_repertoires.yml
+# ---
+# - name: Creation des repertoires
+#   import_tasks: creation_repertoires.yml
 
-- name: creation des volumes
-  import_tasks: creation_volume.yml
+# - name: creation des volumes
+#   import_tasks: creation_volume.yml
 
-- name: creation plannif
-  import_tasks: creation_planification.yml
+# - name: creation plannif
+#   import_tasks: creation_planification.yml
 
-- name: creation snapshot
-  import_tasks: creation_snapshot.yml
+# - name: creation snapshot
+#   import_tasks: creation_snapshot.yml
 
-- name : creation des mirror
-  import_tasks: creation_mirror.yml
+# - name : creation des mirror
+#   import_tasks: creation_mirror.yml
 
 
-# - name: creation des repertoires v2
-#   import_tasks: creation_repertoire_v2.yml
+- name: Vérifier et créer les répertoires si nécessaire
+  include_tasks: creation_repertoire_v2.yml
+  loop: "{{ mapr_directories }}"
+  loop_control:
+    loop_var: directory
 
-# - name: creation des volumes v2
-#   import_tasks: creation_volumev2.yml
+- name: Vérifier et créer les volumes si nécessaire
+  include_tasks: creation_volumev2.yml
+  loop: "{{ volumes }}"
+  loop_control:
+    loop_var: volume
 
-# - name: creation plannif v2
-#   import_tasks: creation_planificationv2.yml
 
-# - name: creation snapshot v2
-#   import_tasks: creation_snapshotv2.yml
+- name: Vérifier et créer les planifications si nécessaire
+  include_tasks: creation_planificationv2.yml
+  loop: "{{ planifications }}"
+  loop_control:
+    loop_var: schedule
 
-# - name : creation des mirror v2
-#   import_tasks: creation_mirrorv2.yml
+
+- name: Vérifier et créer les snapshots si nécessaire
+  include_tasks: creation_snapshotv2.yml
+  loop: "{{ snapshots }}"
+  loop_control:
+    loop_var: snapshot
+
+
+- name: Gérer les volumes miroirs
+  include_tasks: creation_mirrorv2.yml
+  loop: "{{ mirror_volumes }}"
+  loop_control:
+    loop_var: mirror_volume

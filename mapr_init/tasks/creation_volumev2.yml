@@ -1,25 +1,20 @@
+- name: Vérifier si le volume "{{ volume.name }}" existe
+  command: maprcli volume info -name "{{ volume.name }}"
+  register: volume_exists
+  ignore_errors: yes
+  changed_when: False
 
-- name: Vérifier et créer le volume "{{ item.name }}"
-  block:
-    - name: Vérifier si le volume "{{ item.name }}" existe
-      command: maprcli volume info -name "{{ item.name }}"
-      register: volume_exists
-      ignore_errors: yes
-      changed_when: False
+- name: Créer le volume "{{ volume.name }}"
+  command: maprcli volume create -name "{{ volume.name }}" -path "{{ volume.path }}"
+  when: volume_exists.rc != 0
+  register: volume_creation
+  changed_when: True
 
-    - name: Créer le volume "{{ item.name }}"
-      command: maprcli volume create -name "{{ item.name }}" -path "{{ item.path }}"
-      when: volume_exists.rc != 0
-      register: volume_creation
-      changed_when: True
-
-    - name: Afficher le message pour "{{ item.name }}"
-      debug:
-        msg: >
-          {{
-            "Le volume " + item.name + " existe déjà."
-            if volume_exists.rc == 0
-            else "Le volume " + item.name + " a été créé avec succès."
-          }}
-      when: volume_exists.rc == 0 or volume_creation.changed
-  loop: "{{ volumes }}"
+- name: Afficher le message pour "{{ volume.name }}"
+  debug:
+    msg: >
+      {{
+        "Le volume " + volume.name + " existe déjà."
+        if volume_exists.rc == 0
+        else "Le volume " + volume.name + " a été créé avec succès."
+      }}

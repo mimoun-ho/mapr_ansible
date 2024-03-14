@@ -1,3 +1,4 @@
+
 - name: Vérifier si le répertoire /user/mapr/projetmapr_ansible/data existe
   command: hadoop fs -test -d /user/mapr/projetmapr_ansible/data
   register: dir_exists
