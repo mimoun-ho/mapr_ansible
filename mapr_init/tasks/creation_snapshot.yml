@@ -14,11 +14,12 @@
   debug:
     msg: >
       {{
-        "Le snapshot volume-raw-snapshot existe déjà." 
-        if snapshot_exists.rc == 0 
-        else "Le snapshot volume-raw-snapshot a été créé avec succès."
+        "Le snapshot volume-raw-snapshot a été créé avec succès."
+        if snapshot_creation.changed 
+        else "Le snapshot volume-raw-snapshot existe déjà."
       }}
-  when: snapshot_exists.rc == 0 or snapshot_creation.changed
+  when: snapshot_list.rc != 0 or snapshot_creation.changed
+
 
 - name: Vérifier si le snapshot volume-clean-snapshot existe
   command: maprcli volume snapshot list -volume volume-clean-data | grep volume-clean-snapshot
@@ -36,11 +37,14 @@
   debug:
     msg: >
       {{
-        "Le snapshot volume-clean-snapshot existe déjà." 
-        if snapshot_exists.rc == 0 
-        else "Le snapshot volume-clean-snapshot a été créé avec succès."
+        "Le snapshot volume-clean-snapshot a été créé avec succès."
+        if snapshot_creation.changed 
+        else "Le snapshot volume-clean-snapshot existe déjà."
       }}
-  when: snapshot_exists.rc == 0 or snapshot_creation.changed
+  when: snapshot_list.rc != 0 or snapshot_creation.changed
+
+
+
 - name: Vérifier si le snapshot volume-modeled-snapshot existe
   command: maprcli volume snapshot list -volume volume-modeled-data | grep volume-modeled-snapshot
   register: snapshot_exists
@@ -57,8 +61,8 @@
   debug:
     msg: >
       {{
-        "Le snapshot volume-modeled-snapshot existe déjà." 
-        if snapshot_exists.rc == 0 
-        else "Le snapshot volume-modeled-snapshot a été créé avec succès."
+        "Le snapshot volume-modeled-snapshot a été créé avec succès."
+        if snapshot_creation.changed 
+        else "Le snapshot volume-modeled-snapshot existe déjà."
       }}
-  when: snapshot_exists.rc == 0 or snapshot_creation.changed
+  when: snapshot_list.rc != 0 or snapshot_creation.changed
