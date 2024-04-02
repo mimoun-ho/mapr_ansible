@@ -16,34 +16,34 @@
 
 
 - name: Vérifier et créer les répertoires si nécessaire
-  import_tasks: creation_repertoire_v2.yml
+  include_tasks: creation_repertoire_v2.yml
   loop: "{{ mapr_directories }}"
   loop_control:
     loop_var: directory
 
 - name: Vérifier et créer les volumes si nécessaire
-  import_tasks: creation_volumev2.yml
+  include_tasks: creation_volumev2.yml
   loop: "{{ volumes }}"
   loop_control:
     loop_var: volume
 
 
 - name: Vérifier et créer les planifications si nécessaire
-  import_tasks: creation_planificationv2.yml
+  include_tasks: creation_planificationv2.yml
   loop: "{{ planifications }}"
   loop_control:
     loop_var: schedule
 
 
 - name: Vérifier et créer les snapshots si nécessaire
-  import_tasks: creation_snapshotv2.yml
+  include_tasks: creation_snapshotv2.yml
   loop: "{{ snapshots }}"
   loop_control:
     loop_var: snapshot
 
 
 - name: Gérer les volumes miroirs
-  import_tasks: creation_mirrorv2.yml
+  include_tasks: creation_mirrorv2.yml
   loop: "{{ mirror_volumes }}"
   loop_control:
     loop_var: mirror_volume
