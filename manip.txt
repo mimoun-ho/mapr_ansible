@@ -1,1 +1,1 @@
-ansible-playbook mon_playbook.yml --tags "creer_volume" -e "volume.name=monVolume"
+ansible-playbook deploiement.yml --tags "creer_volume" -e "volume.name=monVolume"
