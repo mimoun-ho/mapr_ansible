@@ -3,12 +3,16 @@
   register: volume_exists
   ignore_errors: yes
   changed_when: False
+  tags:
+    - verifier_volume
 
 - name: Créer le volume "{{ volume.name }}"
   command: maprcli volume create -name "{{ volume.name }}" -path "{{ volume.path }}"
   when: volume_exists.rc != 0
   register: volume_creation
   changed_when: True
+  tags:
+    - creer_volume
 
 - name: Afficher le message pour "{{ volume.name }}"
   debug:
@@ -18,3 +22,5 @@
         if volume_exists.rc == 0
         else "Le volume " + volume.name + " a été créé avec succès."
       }}
+  tags:
+    - afficher_message
