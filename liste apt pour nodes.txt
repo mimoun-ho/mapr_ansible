@@ -1,0 +1,12 @@
+sudo yum -y install mapr-fileserver mapr-nodemanager
+sudo yum -y install mapr-cldb
+sudo yum -y install mapr-zookeeper
+sudo yum -y install mapr-nfs
+sudo yum -y install mapr-resourcemanager
+
+
+sudo yum -y remove mapr-historyserver
+sudo yum -y remove mapr-timelineserver
+sudo yum -y remove mapr-webserver
+sudo yum -y remove mapr-apiserver
+sudo yum -y remove mapr-gateway

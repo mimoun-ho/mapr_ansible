@@ -1,4 +1,32 @@
 UBUNTU
+
+
+
+1- ajout hostname
+sudo hostnamectl set-hostname node01-maprlab.fr
+
+2- ajout dans etc hosts
+echo "$(ip addr show enp0s3 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1) $(hostname)" | sudo tee -a /etc/hosts
+
+sudo apt-get install syslinux-utils
+
+
+1-
+sudo systemctl stop ufw 
+sudo systemctl disable ufw 
+sudo systemctl stop systemd-timesyncd 
+sudo systemctl disable systemd-timesyncd 
+sudo apt install -y ntp ntpdate 
+sudo systemctl start ntp 
+sudo systemctl enable ntp 
+
+1-
+sudo apt install firewalld -y
+
+sudo apt install python
+2-
+sudo bash script_add_port.sh
+
 1-creer la maprgpg
 #crée un fichier maprgpg.key pour le rpm
 echo -e "-----BEGIN PGP PUBLIC KEY BLOCK-----\nVersion: GnuPG v1.4.11 (GNU/Linux)\n\nmQENBFOsW+4BCADogwlHDS1cH2Io9qumv7nBaE4zMszrBwA3KKyPFZVG8kZ+1iCi\nZyqmtvPlENFqzCWO8qrMuCUvC7Um74rILJbstyGQNkj8U/HjJDE3qP8dFTTXfQHN\nx6Fh2U37K3+7uPR2rOmR7ZQxmMXK+B4KLUFiC6tLPqSx23sn40aOWmgJAUPFEBep\nDR2Ku+fTSJHqj8zjQPjfayXxigKUORsc84ZtoBGXXqumr2Q0nR0QWyxRWo5EOXR5\nhjeTIImaD/oS/P0+Rzj2oCTIyjg9hhF+HzPyJy1A8BckfU15JFSt6vqJ0X2iQf+Y\nrGfts9DeoICiDkAHedygKLaTaVWzCWpmqcQNABEBAAG0V01hcFIgVGVjaG5vbG9n\naWVzLCBJbmMuIExpbnV4IFBhY2thZ2UgU2lnbmluZyBLZXkgKDIwMTQgLSBubyBz\ndWJrZXkpIDxzdXBwb3J0QG1hcHIuY29tPokBOAQTAQIAIgUCU6xb7gIbAwYLCQgH\nAwIGFQgCCQoLBBYCAwECHgECF4AACgkQv922CWaz8NbHdAgAnlZX8x+gZyasTceY\n2GidSalEKfSiSLiCu/TXqL/VpZzBu06rxJsKAwRbt02W87TslDBXbJ62zJ2K50bx\ntA0F8fZEwUAV5MtuHv/sq9oeP2ypQpctbGGeL5nvGmozzh0dxnrOcKms0TisKIsq\nkoBz1sgRkMWI0YTxRrSafpn6Ef5uVvIwCCR1dAz0kSkjoWLPYQ9z9VBfzUvgikML\nqhNVII9se1YFWEW0R/iDdXv/ypJkKl9mJfX6nSwfLkdXoBuBivi9YFdwVt6xMSSE\nx8IsKhj+C3eu0KKrZmOHr+cIuoOjMQ+VAXSeTrEMmg4WgakdzkRewTu6zuTkKYd0\nX3WDWg==\n=96ys\n-----END PGP PUBLIC KEY BLOCK-----" > maprgpg.key
@@ -6,9 +34,47 @@ echo -e "-----BEGIN PGP PUBLIC KEY BLOCK-----\nVersion: GnuPG v1.4.11 (GNU/Linux
 2-ajouter la maprgpg
 sudo apt-key add maprgpg.key
 
+
 3- creer les source.lists
-echo "deb https://package.ezmeral.hpe.com/releases//MEP/MEP-6.4.0/ubuntu binary trusty" | sudo tee /etc/apt/sources.list.d/maprecosystem.list
+echo "deb https://package.ezmeral.hpe.com/releases//MEP/MEP-6.1.1/ubuntu binary trusty" | sudo tee /etc/apt/sources.list.d/maprecosystem.list
 echo "deb https://package.ezmeral.hpe.com/releases//v6.1.1/ubuntu binary trusty" | sudo tee /etc/apt/sources.list.d/maprtech.list
 
 4- creer le repo
 echo -e "machine package.ezmeral.hpe.com \nlogin salem.ben.afia@gmail.com \npassword k7grnmaTT5s5mSZJirKHbkfWrenTh5cDJejIQw2UiEiEatdIYWvzW3pz7D-aAdzNlkgxWG2uKoSSDw6fkyEM0A" | sudo tee /etc/apt/auth.conf.d/mapr-hpe.conf
+
+5-
+sudo apt update
+
+sudo apt install openjdk-8-jdk -y
+
+sudo apt -y install mapr-fileserver mapr-nodemanager mapr-cldb mapr-zookeeper mapr-nfs mapr-webserver mapr-apiserver mapr-gateway mapr-resourcemanager mapr-historyserver mapr-timelineserver
+
+ 
+
+sudo apt-get install nfs-kernel-server
+
+
+sudo groupadd mapr
+sudo useradd -m -g mapr mapr
+echo 'mapr:mapr' | sudo chpasswd
+sudo usermod -aG sudo mapr
+sudo mkdir /home/mapr
+sudo chown mapr:mapr /home/mapr
+sudo chmod 700 /home/mapr
+sudo usermod -d /home/mapr mapr
+
+echo -e "/dev/sdb\n/dev/sdc" > /tmp/disks
+
+sudo /opt/mapr/server/disksetup -F /tmp/disks
+
+sudo cp /opt/mapr/conf.new/* /opt/mapr/conf/
+sudo cp /opt/mapr/zookeeper/zookeeper-3.4.11/conf.new/* /opt/mapr/zookeeper/zookeeper-3.4.11/conf/
+
+sudo cp /opt/mapr/apiserver/conf.new/* /opt/mapr/apiserver/conf/
+
+sudo /opt/mapr/server/configure.sh -no-autostart -C node01-maprlab.fr -Z node01-maprlab.fr:5181 -N jems.cluster.fr
+
+sudo systemctl start mapr-zookeeper
+sudo systemctl stop mapr-zookeeper
+sudo systemctl stop mapr-warden
+sudo systemctl start mapr-warden

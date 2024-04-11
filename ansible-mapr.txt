@@ -1,0 +1,73 @@
+1 VM Linux : CENTOS 
+16 Go de RAM
+150 Go de disque
+8 vCPU
+1 carte NAT
+1 carte Private Network
+
+#reperer la carte reseau du reseau interne ici c'est enp0s8
+ip addr
+
+#ajouter la bonne ip pour le reseau interne ici 192.168.1.85
+cd /etc/sysconfig/network-scripts/
+echo -e "BOOTPROTO=static\nONBOOT=yes\nIPADDR=192.168.1.85\nNETMASK=255.255.255.0\nIPV6INIT=no" | sudo tee ifcfg-enp0s8
+
+#modifie le hostname avec cluster.mop.fr
+sudo hostnamectl set-hostname houari.ub.fr
+
+
+#lie l'ip au hostname dans etc hosts
+echo "192.168.1.85 cluster.mop.fr" | sudo tee -a /etc/hosts
+
+#crée un fichier maprgpg.key pour le rpm
+echo -e "-----BEGIN PGP PUBLIC KEY BLOCK-----\nVersion: GnuPG v1.4.11 (GNU/Linux)\n\nmQENBFOsW+4BCADogwlHDS1cH2Io9qumv7nBaE4zMszrBwA3KKyPFZVG8kZ+1iCi\nZyqmtvPlENFqzCWO8qrMuCUvC7Um74rILJbstyGQNkj8U/HjJDE3qP8dFTTXfQHN\nx6Fh2U37K3+7uPR2rOmR7ZQxmMXK+B4KLUFiC6tLPqSx23sn40aOWmgJAUPFEBep\nDR2Ku+fTSJHqj8zjQPjfayXxigKUORsc84ZtoBGXXqumr2Q0nR0QWyxRWo5EOXR5\nhjeTIImaD/oS/P0+Rzj2oCTIyjg9hhF+HzPyJy1A8BckfU15JFSt6vqJ0X2iQf+Y\nrGfts9DeoICiDkAHedygKLaTaVWzCWpmqcQNABEBAAG0V01hcFIgVGVjaG5vbG9n\naWVzLCBJbmMuIExpbnV4IFBhY2thZ2UgU2lnbmluZyBLZXkgKDIwMTQgLSBubyBz\ndWJrZXkpIDxzdXBwb3J0QG1hcHIuY29tPokBOAQTAQIAIgUCU6xb7gIbAwYLCQgH\nAwIGFQgCCQoLBBYCAwECHgECF4AACgkQv922CWaz8NbHdAgAnlZX8x+gZyasTceY\n2GidSalEKfSiSLiCu/TXqL/VpZzBu06rxJsKAwRbt02W87TslDBXbJ62zJ2K50bx\ntA0F8fZEwUAV5MtuHv/sq9oeP2ypQpctbGGeL5nvGmozzh0dxnrOcKms0TisKIsq\nkoBz1sgRkMWI0YTxRrSafpn6Ef5uVvIwCCR1dAz0kSkjoWLPYQ9z9VBfzUvgikML\nqhNVII9se1YFWEW0R/iDdXv/ypJkKl9mJfX6nSwfLkdXoBuBivi9YFdwVt6xMSSE\nx8IsKhj+C3eu0KKrZmOHr+cIuoOjMQ+VAXSeTrEMmg4WgakdzkRewTu6zuTkKYd0\nX3WDWg==\n=96ys\n-----END PGP PUBLIC KEY BLOCK-----" > maprgpg.key
+
+#importer la clef
+sudo rpm --import maprgpg.key
+machine package.ezmeral.hpe.com login salem.ben.afia@gmail.com password k7grnmaTT5s5mSZJirKHbkfWrenTh5cDJejIQw2UiEiEatdIYWvzW3pz7D-aAdzNlkgxWG2uKoSSDw6fkyEM0A
+
+#importer les credential pour pouvoir telecharger les package
+echo -e "[maprtech]\nname=HPE Ezmeral Data Fabric\nbaseurl=https://package.ezmeral.hpe.com/releases/v6.1.1/redhat/\nusername=salem.ben.afia@gmail.com\npassword=k7grnmaTT5s5mSZJirKHbkfWrenTh5cDJejIQw2UiEiEatdIYWvzW3pz7D-aAdzNlkgxWG2uKoSSDw6fkyEM0A\nenabled=1\ngpgcheck=1\nprotect=1\n\n[maprecosystem]\nname=HPE Ezmeral Data Fabric\nbaseurl=https://package.ezmeral.hpe.com/releases/MEP/MEP-6.1.1/redhat\nusername=salem.ben.afia@gmail.com\npassword=k7grnmaTT5s5mSZJirKHbkfWrenTh5cDJejIQw2UiEiEatdIYWvzW3pz7D-aAdzNlkgxWG2uKoSSDw6fkyEM0A\nenabled=1\ngpgcheck=1\nprotect=1" | sudo tee /etc/yum.repos.d/mapr-hpe.repo > /dev/null
+
+ UBUNTU
+DANS apt/CONF.D
+deb https://package.ezmeral.hpe.com/releases//v6.1.1/ubuntu binary trusty
+deb https://package.ezmeral.hpe.com/releases//MEP/MEP-6.4.0/ubuntu binary trusty
+  
+sudo yum -y install mapr-fileserver mapr-nodemanager
+
+sudo apt install openjdk-8-jdk -y
+#installer openjdk 1.8
+sudo yum update -y
+sudo yum install java-1.8.0-openjdk-devel -y
+
+#installer les package
+sudo yum -y install mapr-fileserver mapr-nodemanager
+sudo yum -y install mapr-cldb
+sudo yum -y install mapr-zookeeper
+sudo yum -y install mapr-nfs
+sudo yum -y install mapr-webserver
+sudo yum -y install mapr-apiserver
+sudo yum -y install mapr-gateway
+sudo yum -y install mapr-resourcemanager
+sudo yum -y install mapr-historyserver
+sudo yum -y install mapr-timelineserver
+
+#houari.cluser c'est le hostname, my.houari.com c'est un nom que l'on choisi et --create-user c'est pour créer l'user mapr automatiquement si il n'existe pas deja
+sudo ./configure.sh -C houari.cluser -Z houari.cluser -N my.houari.com  --create-user
+#SI SA MARCHE PAS FAIRE LA SUITE SINON IGNORER LES CP
+sudo cp /opt/mapr/conf.new/* /opt/mapr/conf/
+sudo cp /opt/mapr/zookeeper/zookeeper-3.4.11/conf.new/* /opt/mapr/zookeeper/zookeeper-3.4.11/conf/
+sudo cp /opt/mapr/apiserver/conf.new/* /opt/mapr/apiserver/conf/
+ 
+sudo systemctl daemon-reload
+sudo systemctl start mapr-zookeeper
+sudo systemctl stop mapr-zookeeper
+sudo systemctl start mapr-warden
+sudo systemctl stop mapr-warden
+
+sudo nano /opt/mapr/conf/mapr-clusters.conf
+
+/opt/mapr/zookeeper/zookeeper-*/bin/zkCli.sh -server houari.cluser:5181
+
+configure.sh -N my.cluster.com -C nodeAeth0,nodeCeth0 -M nodeBeth0,nodeBeth1 -M nodeDeth0,nodeDeth1 -Z zknodeA
