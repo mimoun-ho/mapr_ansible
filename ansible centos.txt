@@ -2,9 +2,13 @@ CENTOS
 
 sudo ifup enp0s8
 
+sudo nmcli connection modify enp0s8 autoconnect yes
+
 sudo hostnamectl set-hostname node01-maprlab.fr
 
 echo "$(ip addr show enp0s3 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1) $(hostname)" | sudo tee -a /etc/hosts
+echo "192.168.100.13 node02-maprlab.fr" | sudo tee -a /etc/hosts
+echo "192.168.100.14 node03-maprlab.fr" | sudo tee -a /etc/hosts
 
 #crée un fichier maprgpg.key pour le rpm
 echo -e "-----BEGIN PGP PUBLIC KEY BLOCK-----\nVersion: GnuPG v1.4.11 (GNU/Linux)\n\nmQENBFOsW+4BCADogwlHDS1cH2Io9qumv7nBaE4zMszrBwA3KKyPFZVG8kZ+1iCi\nZyqmtvPlENFqzCWO8qrMuCUvC7Um74rILJbstyGQNkj8U/HjJDE3qP8dFTTXfQHN\nx6Fh2U37K3+7uPR2rOmR7ZQxmMXK+B4KLUFiC6tLPqSx23sn40aOWmgJAUPFEBep\nDR2Ku+fTSJHqj8zjQPjfayXxigKUORsc84ZtoBGXXqumr2Q0nR0QWyxRWo5EOXR5\nhjeTIImaD/oS/P0+Rzj2oCTIyjg9hhF+HzPyJy1A8BckfU15JFSt6vqJ0X2iQf+Y\nrGfts9DeoICiDkAHedygKLaTaVWzCWpmqcQNABEBAAG0V01hcFIgVGVjaG5vbG9n\naWVzLCBJbmMuIExpbnV4IFBhY2thZ2UgU2lnbmluZyBLZXkgKDIwMTQgLSBubyBz\ndWJrZXkpIDxzdXBwb3J0QG1hcHIuY29tPokBOAQTAQIAIgUCU6xb7gIbAwYLCQgH\nAwIGFQgCCQoLBBYCAwECHgECF4AACgkQv922CWaz8NbHdAgAnlZX8x+gZyasTceY\n2GidSalEKfSiSLiCu/TXqL/VpZzBu06rxJsKAwRbt02W87TslDBXbJ62zJ2K50bx\ntA0F8fZEwUAV5MtuHv/sq9oeP2ypQpctbGGeL5nvGmozzh0dxnrOcKms0TisKIsq\nkoBz1sgRkMWI0YTxRrSafpn6Ef5uVvIwCCR1dAz0kSkjoWLPYQ9z9VBfzUvgikML\nqhNVII9se1YFWEW0R/iDdXv/ypJkKl9mJfX6nSwfLkdXoBuBivi9YFdwVt6xMSSE\nx8IsKhj+C3eu0KKrZmOHr+cIuoOjMQ+VAXSeTrEMmg4WgakdzkRewTu6zuTkKYd0\nX3WDWg==\n=96ys\n-----END PGP PUBLIC KEY BLOCK-----" > maprgpg.key
@@ -15,15 +19,15 @@ sudo rpm --import maprgpg.key
 #importer les credential pour pouvoir telecharger les package
 echo -e "[maprtech]\nname=HPE Ezmeral Data Fabric\nbaseurl=https://package.ezmeral.hpe.com/releases/v6.1.1/redhat/\nusername=salem.ben.afia@gmail.com\npassword=k7grnmaTT5s5mSZJirKHbkfWrenTh5cDJejIQw2UiEiEatdIYWvzW3pz7D-aAdzNlkgxWG2uKoSSDw6fkyEM0A\nenabled=1\ngpgcheck=1\nprotect=1\n\n[maprecosystem]\nname=HPE Ezmeral Data Fabric\nbaseurl=https://package.ezmeral.hpe.com/releases/MEP/MEP-6.1.1/redhat\nusername=salem.ben.afia@gmail.com\npassword=k7grnmaTT5s5mSZJirKHbkfWrenTh5cDJejIQw2UiEiEatdIYWvzW3pz7D-aAdzNlkgxWG2uKoSSDw6fkyEM0A\nenabled=1\ngpgcheck=1\nprotect=1" | sudo tee /etc/yum.repos.d/mapr-hpe.repo > /dev/null
 
+sudo firewall-cmd --zone=public --add-port={5181/tcp,2888/tcp,3888/tcp,7222/tcp,7221/tcp,8443/tcp} --permanent
+iptables -A INPUT -p tcp  --match multiport --dports 2888,3888,5181,7222,7221,8443 -j ACCEPT
+sudo firewall-cmd --reload
+sudo iptables-save
 
 
 sudo yum update -y
 
-sudo yum install syslinux-utils -y
-sudo yum install install firewalld -y
-
-sudo yum install python -y
-sudo yum install java-1.8.0-openjdk-devel -y
+sudo yum install syslinux-utils firewalld python java-1.8.0-openjdk-devel -y
 
 
 
@@ -41,11 +45,17 @@ sudo chmod 700 /home/mapr
 
 sudo yum install mapr-fileserver mapr-nodemanager mapr-cldb mapr-zookeeper mapr-nfs mapr-webserver mapr-apiserver mapr-gateway mapr-resourcemanager mapr-historyserver mapr-timelineserver -y
 
+#pour node
+
+sudo yum install mapr-fileserver mapr-resourcemanager mapr-nodemanager mapr-cldb mapr-nfs mapr-zookeeper -y
+
 sudo cp /opt/mapr/conf.new/* /opt/mapr/conf/
 sudo cp /opt/mapr/zookeeper/zookeeper-3.4.11/conf.new/* /opt/mapr/zookeeper/zookeeper-3.4.11/conf/
 sudo cp /opt/mapr/apiserver/conf.new/* /opt/mapr/apiserver/conf/
 
 sudo /opt/mapr/server/configure.sh -no-autostart -C node01-maprlab.fr -Z node01-maprlab.fr:5181 -N jems.cluster.fr
+
+sudo /opt/mapr/server/configure.sh -no-autostart -C node01-maprlab.fr,node02-maprlab.fr,node03-maprlab.fr -Z node01-maprlab.fr,node02-maprlab.fr,node03-maprlab.fr -N jems.cluster.fr
 
 sudo /opt/mapr/server/disksetup -F /tmp/disks
 
@@ -55,3 +65,10 @@ sudo systemctl start mapr-zookeeper
 sudo systemctl start mapr-warden
 sudo systemctl stop mapr-zookeeper
 sudo systemctl stop mapr-warden
+
+
+
+ssh-keygen -t rsa
+ssh-copy-id u1@node01-maprlab.fr
+ssh-copy-id u1@node03-maprlab.fr
+sudo /opt/mapr/server/configure.sh -no-autostart -C node01-maprlab.fr,node02-maprlab.fr -Z node01-maprlab.fr:5181,node02-maprlab.fr:5181 -N jems.cluster.fr
