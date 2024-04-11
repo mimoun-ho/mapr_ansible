@@ -1,0 +1,61 @@
+sudo groupadd -g 2147483632 mapr
+sudo useradd mapr -u 2147483632 -g 2147483632 -m -s /bin/bash
+
+sudo /opt/mapr/server/configure.sh -R
+
+sudo /opt/mapr/server/configure.sh -no-autostart -C node01.maprlab.fr,node02.maprlab.fr,houari.cluser -Z houari.cluser,node01.maprlab.fr,node02.maprlab.fr -N my.houari.com
+sudo systemctl start mapr-zookeeper
+sudo systemctl stop mapr-zookeeper
+sudo systemctl stop mapr-warden
+sudo systemctl start mapr-warden
+maprcli volume create -name mirrorTestVolume -source testVolume@my.houari.com -type mirror
+maprcli volume create - name testVolume - path /testVolume
+
+maprcli volume mirror start -name mirrorTestVolume
+ 
+maprcli volume mirror break -name mirrorTestVolume
+ sudo maprcli volume list -columns volumename,alarms,mounted,volumetype
+sudo jps
+163489503328125227
+
+sudo iptables -A INPUT -p tcp --dport 7222 -j ACCEPT
+sudo firewall-cmd --zone=public --add-port=7222/tcp --permanent
+sudo firewall-cmd --reload
+
+sudo iptables -A INPUT -p tcp --dport 2888 -j ACCEPT
+sudo firewall-cmd --zone=public --add-port=2888/tcp --permanent
+sudo firewall-cmd --reload
+
+sudo iptables -A INPUT -p tcp --dport 3888 -j ACCEPT
+sudo firewall-cmd --zone=public --add-port=3888/tcp --permanent
+sudo firewall-cmd --reload
+sudo iptables -A INPUT -p tcp --dport 8888 -j ACCEPT
+sudo firewall-cmd --zone=public --add-port=8888/tcp --permanent
+sudo firewall-cmd --reload
+2049 pour NFSv4)
+
+ 5660
+
+sudo iptables -A INPUT -p tcp --dport 2049 -j ACCEPT
+sudo firewall-cmd --zone=public --add-port=2049/tcp --permanent
+sudo firewall-cmd --reload
+hue
+sudo iptables -A INPUT -p tcp --dport 8088 -j ACCEPT
+sudo firewall-cmd --zone=public --add-port=8088/tcp --permanent
+sudo firewall-cmd --reload
+m
+sudo iptables -A INPUT -p tcp --dport 7221 -j ACCEPT
+sudo firewall-cmd --zone=public --add-port=100005/udp --permanent
+sudo firewall-cmd --reload
+zk
+sudo iptables -A INPUT -p tcp --dport 5181 -j ACCEPT
+sudo firewall-cmd --zone=public --add-port=5181/tcp --permanent
+sudo firewall-cmd --reload
+
+ajout des ligne server.0 1 et 2 dans cfg
+ajout du myid dans zkmachin
+ouverture de tout les port de la terre 5181 partout
+
+echo srvr | nc node01-maprlab.fr 5181
+
+echo "machine package.ezmeral.hpe.com login salem.ben.afia@gmail.com password k7grnmaTT5s5mSZJirKHbkfWrenTh5cDJejIQw2UiEiEatdIYWvzW3pz7D-aAdzNlkgxWG2uKoSSDw6fkyEM0A" | sudo tee -a /etc/apt/auth.conf > /dev/null

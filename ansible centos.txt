@@ -2,6 +2,8 @@ CENTOS
 
 sudo ifup enp0s8
 
+sudo nmcli connection modify enp0s8 autoconnect yes
+
 sudo hostnamectl set-hostname node01-maprlab.fr
 
 echo "$(ip addr show enp0s3 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1) $(hostname)" | sudo tee -a /etc/hosts
@@ -19,11 +21,7 @@ echo -e "[maprtech]\nname=HPE Ezmeral Data Fabric\nbaseurl=https://package.ezmer
 
 sudo yum update -y
 
-sudo yum install syslinux-utils -y
-sudo yum install install firewalld -y
-
-sudo yum install python -y
-sudo yum install java-1.8.0-openjdk-devel -y
+sudo yum install syslinux-utils firewalld python java-1.8.0-openjdk-devel -y
 
 
 
@@ -41,11 +39,17 @@ sudo chmod 700 /home/mapr
 
 sudo yum install mapr-fileserver mapr-nodemanager mapr-cldb mapr-zookeeper mapr-nfs mapr-webserver mapr-apiserver mapr-gateway mapr-resourcemanager mapr-historyserver mapr-timelineserver -y
 
+#pour node
+
+sudo yum install mapr-fileserver mapr-resourcemanager mapr-nodemanager mapr-cldb mapr-nfs mapr-zookeeper -y
+
 sudo cp /opt/mapr/conf.new/* /opt/mapr/conf/
 sudo cp /opt/mapr/zookeeper/zookeeper-3.4.11/conf.new/* /opt/mapr/zookeeper/zookeeper-3.4.11/conf/
 sudo cp /opt/mapr/apiserver/conf.new/* /opt/mapr/apiserver/conf/
 
 sudo /opt/mapr/server/configure.sh -no-autostart -C node01-maprlab.fr -Z node01-maprlab.fr:5181 -N jems.cluster.fr
+
+sudo /opt/mapr/server/configure.sh -no-autostart -C node01-maprlab.fr,node02-maprlab.fr -Z node01-maprlab.fr:5181,node02-maprlab.fr:5181 -N jems.cluster.fr
 
 sudo /opt/mapr/server/disksetup -F /tmp/disks
 
@@ -55,3 +59,10 @@ sudo systemctl start mapr-zookeeper
 sudo systemctl start mapr-warden
 sudo systemctl stop mapr-zookeeper
 sudo systemctl stop mapr-warden
+
+
+
+ssh-keygen -t rsa
+ssh-copy-id u1@node01-maprlab.fr
+
+sudo /opt/mapr/server/configure.sh -no-autostart -C node01-maprlab.fr,node02-maprlab.fr -Z node01-maprlab.fr:5181,node02-maprlab.fr:5181 -N jems.cluster.fr

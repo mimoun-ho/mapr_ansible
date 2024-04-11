@@ -5,12 +5,6 @@
 1 carte NAT
 1 carte Private Network
 
-#reperer la carte reseau du reseau interne ici c'est enp0s8
-ip addr
-
-#ajouter la bonne ip pour le reseau interne ici 192.168.1.85
-cd /etc/sysconfig/network-scripts/
-echo -e "BOOTPROTO=static\nONBOOT=yes\nIPADDR=192.168.1.85\nNETMASK=255.255.255.0\nIPV6INIT=no" | sudo tee ifcfg-enp0s8
 
 #modifie le hostname avec cluster.mop.fr
 sudo hostnamectl set-hostname houari.ub.fr
