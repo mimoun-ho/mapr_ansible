@@ -1,0 +1,77 @@
+CLDB: 7222
+CLDB JMX Monitor Port: 7220,7223,7224
+CLDB web port: 7221
+maprlogin utility: 7443
+Data Access Gateway: 5678
+Drill JMX Port: 6090
+Drill Web UI: 8047
+Drill (User Port): 31010
+Drill (Control Port): 31011
+Drill (Data Port): 31012
+Drill (ZooKeeper Port): 5181
+Elasticsearch (Components Communication Port): 9200
+Elasticsearch (Daemons Communication Port): 9300
+File Migration Service: 9444
+Gateway: 7660
+Grafana: 3000
+HBase Master: 16000
+HBase Master Web UI: 16010
+HBase Thrift Server: 9090
+HBase Thrift Web UI: 9095
+HBase REST Server: 8080
+HBase REST Web UI: 8086
+HBase Regionserver: 16020
+HBase Regionserver UI: 16030
+HistoryServer RPC: 10020
+HistoryServer Web UI and REST APIs: 19890
+Hive Metastore: 9083
+Hiveserver2: 10000
+Hiveserver2 Web UI: 10002
+Httpfs: 14000
+Hue Webserver: 8888
+Impala Catalog Daemon: 25020
+Impala Daemon: 25000
+Impala StateStoreDaemon: 25010
+KSQL: 8084
+Kafka Connect: 8083
+Kafka REST: 8082
+Kafka Schema Registry: 8087
+Kibana: 5601
+MAST Gateway: 8660
+MapR File System server: 6660
+S3 Gateway: 9000
+NFS: 9997, 9998
+NodeManager JMX Port: 8027
+NodeManager: 8099
+NodeManager Localizer RPC: 8040
+NodeManager Web UI and REST APIs: 8044
+Oozie: 11443
+OpenTSDB: 4242
+Port Mapper: 111
+ResourceManager JMX Port: 8025
+ResourceManager Admin RPC: 8033
+ResourceManager Client RPC: 8032
+ResourceManager Resource Tracker RPC (for NodeManagers): 8031
+ResourceManager Scheduler RPC (for ApplicationMasters): 8030
+ResourceManager Web UI (HTTP): 8088
+ResourceManager Web UI (HTTPS): 8090
+Shuffle HTTP: 13562
+Spark Standalone Master (RPC): 7077
+Spark Standalone Master (Web UI): 8980
+Spark Standalone Worker: 8081
+Spark Thrift Server (if start and stop server using Spark scripts): 10000
+Spark Thrift Server : 2304
+Spark History Server: 18480
+Spark External Shuffle Service: 7337
+Sqoop2 Server: 12000
+Tez Shuffle: 13563
+Timeline Server: 10200
+Timeline Server Web Interface (HTTP): 8188
+Timeline Server Web Interface (HTTPS): 8190
+Tomcat Port (Hive-on-Tez UI): 9383
+Tomcat SSL Port (Hive-on-Tez UI): 9393
+Web UI: 8443
+Zeppelin: 9995
+ZooKeeper: 5181
+ZooKeeper follower-to-leader Communication: 2888
+ZooKeeper Leader Election: 3888
